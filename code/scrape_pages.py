@@ -1,16 +1,27 @@
+from numpy import product
 from common import get_soup
 
 
 def scrape_page(num):
     """Takes a page and returns a list of links to the book that are on the page."""
-
-    return None
+    url = 'http://books.toscrape.com/catalogue/page-' + str(num) + '.html'
+    soup = get_soup(url)
+    product_info = soup.findAll('article',{'class':'product_pod'})
+    result = []
+    for prod in product_info:
+        prod_url = prod.find('h3')
+        prod_url = prod_url.find('a')
+        prod_url = 'http://books.toscrape.com/catalogue/' + prod_url['href']
+        result.append(prod_url)
+    return result
 
 
 def scrape_all_pages():
     """Scrapes all pages, returning a list of book links."""
-
-    return None
+    result = []
+    for i in range(1,51):
+        result.extend(scrape_page(i))
+    return result
 
 
 if __name__ == "__main__":
@@ -44,4 +55,7 @@ if __name__ == "__main__":
 
     page_3_book_urls = scrape_page(3)
 
+
     assert set(page_3_book_urls) == set(page_3_actual_book_urls)
+
+    
